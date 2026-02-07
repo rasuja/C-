@@ -12,3 +12,4 @@ C:\Users\S077\Desktop\ポートフォリオ\CSharpPortfolio\obj\Debug\net9.0\ref
 C:\Users\S077\Desktop\ポートフォリオ\CSharpPortfolio\obj\Debug\net9.0\CSharpPortfolio.pdb
 C:\Users\S077\Desktop\ポートフォリオ\CSharpPortfolio\obj\Debug\net9.0\CSharpPortfolio.genruntimeconfig.cache
 C:\Users\S077\Desktop\ポートフォリオ\CSharpPortfolio\obj\Debug\net9.0\ref\CSharpPortfolio.dll
+C:\Users\S077\Desktop\ポートフォリオ\CSharpPortfolio\obj\Debug\net9.0\CSharpPortfolio.sourcelink.json

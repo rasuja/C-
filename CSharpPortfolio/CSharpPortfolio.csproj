@@ -7,8 +7,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DefaultItemExcludes>$(DefaultItemExcludes);Lessons\**</DefaultItemExcludes>
+  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Remove="Lessons\**" />
     <None Include="Lessons\**" />
   </ItemGroup>
 </Project>

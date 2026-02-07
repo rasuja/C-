@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CSharpPortfolio")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3445d6d40ff6938c76c3a8ac048c086ef37c001b")]
 [assembly: System.Reflection.AssemblyProductAttribute("CSharpPortfolio")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CSharpPortfolio")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
