@@ -7,11 +7,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <DefaultItemExcludes>$(DefaultItemExcludes);Lessons\**</DefaultItemExcludes>
-  </PropertyGroup>
-
   <ItemGroup>
+    <!-- 過去の課題コードや新しく作ったWebプロジェクトを、メインのプロジェクトから除外します -->
+    <Compile Remove="Lessons\**" />
+    <Compile Remove="TodoWeb\**" />
     <None Include="Lessons\**" />
+    <None Include="TodoWeb\**" />
   </ItemGroup>
 </Project>

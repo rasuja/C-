@@ -1,18 +1,23 @@
-// Review Test 1 Attempt (List of strings version)
+// Challenge 8: Removing Data (CRUD - Delete)
 Console.WriteLine("タスク名を入力してください（exitで終了）");
 
-List<string> task = new List<string>();
+List<string> tasks = new List<string>();
 
 while (true)
 {
-    string input = Console.ReadLine();
-    if (input == "exit"){
+    string? input = Console.ReadLine();
+
+    if (input == null)
         break;
-    }
-    task.Add(input);
+
+    if (input.Equals("exit", StringComparison.OrdinalIgnoreCase))
+        break;
+
+    if (!string.IsNullOrWhiteSpace(input))
+        tasks.Add(input);
 }
 
-foreach(string t in task)
+foreach (string t in tasks)
 {
     Console.WriteLine(t);
 }
