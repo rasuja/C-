@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using TodoWeb.Data;
 using TodoWeb.Models;
+using TodoWeb.Services;
 
 namespace TodoWeb.Pages;
 
@@ -11,11 +10,11 @@ namespace TodoWeb.Pages;
 /// </summary>
 public class IndexModel : PageModel
 {
-    private readonly MyDbContext _context;
+    private readonly FirestoreService _firestoreService;
 
-    public IndexModel(MyDbContext context)
+    public IndexModel(FirestoreService firestoreService)
     {
-        _context = context;
+        _firestoreService = firestoreService;
     }
 
     /// <summary>
@@ -28,11 +27,7 @@ public class IndexModel : PageModel
     /// </summary>
     public async Task OnGetAsync()
     {
-        // 優先度が高い順（1 > 2 > 3）に並べ替えて取得します
-        TodoList = await _context.ToDoItems
-            .OrderBy(t => t.Priority)
-            .ThenByDescending(t => t.Id)
-            .ToListAsync();
+        TodoList = await _firestoreService.GetTodoItemsAsync();
     }
 
     /// <summary>
@@ -45,14 +40,13 @@ public class IndexModel : PageModel
     {
         if (!string.IsNullOrEmpty(taskname))
         {
-            _context.ToDoItems.Add(new ToDoItem 
+            await _firestoreService.AddTodoItemAsync(new ToDoItem 
             { 
                 Name = taskname, 
                 IsDone = false,
                 Priority = priority,
                 DueDate = dueDate
             });
-            await _context.SaveChangesAsync();
         }
         return RedirectToPage();
     }
@@ -60,28 +54,18 @@ public class IndexModel : PageModel
     /// <summary>
     /// タスクの削除処理
     /// </summary>
-    public async Task<IActionResult> OnPostDeleteAsync(int id)
+    public async Task<IActionResult> OnPostDeleteAsync(string id)
     {
-        var item = await _context.ToDoItems.FindAsync(id);
-        if (item != null)
-        {
-            _context.ToDoItems.Remove(item);
-            await _context.SaveChangesAsync();
-        }
+        await _firestoreService.DeleteTodoItemAsync(id);
         return RedirectToPage();
     }
 
     /// <summary>
     /// タスクの完了状態更新処理
     /// </summary>
-    public async Task<IActionResult> OnPostDoneAsync(int id)
+    public async Task<IActionResult> OnPostDoneAsync(string id)
     {
-        var item = await _context.ToDoItems.FindAsync(id);
-        if (item != null)
-        {
-            item.IsDone = true;
-            await _context.SaveChangesAsync();
-        }
+        await _firestoreService.UpdateTodoItemDoneAsync(id);
         return RedirectToPage();
     }
 }

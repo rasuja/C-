@@ -111,57 +111,80 @@
 
                 <hr class="my-4">
 
-                <!-- 未完了タスクリスト -->
-                <h3 class="h6 mb-3 fw-bold text-secondary border-bottom pb-2">未完了のタスク</h3>
-                <div class="list-group list-group-flush mb-4" style="max-height: 40vh; overflow-y: auto; overflow-x: hidden;">
-                    @if (!Model.TodoList.Any(t => !t.IsDone))
-                    {
-                        <div class="text-center py-4 bg-light rounded">
-                            <i class="bi bi-emoji-sunglasses text-muted" style="font-size: 2.5rem;"></i>
-                            <p class="mt-2 text-muted mb-0">未完了のタスクはありません！</p>
-                        </div>
-                    }
+                <!-- タブ切り替え（リスト表示 / カレンダー表示） -->
+                <ul class="nav nav-tabs mb-4" id="viewTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active fw-bold text-dark" id="list-tab" data-bs-toggle="tab" data-bs-target="#list-view" type="button" role="tab" aria-controls="list-view" aria-selected="true">
+                            <i class="bi bi-list-task me-1"></i>リスト表示
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link fw-bold text-dark" id="calendar-tab" data-bs-toggle="tab" data-bs-target="#calendar-view" type="button" role="tab" aria-controls="calendar-view" aria-selected="false">
+                            <i class="bi bi-calendar-month me-1"></i>カレンダー表示
+                        </button>
+                    </li>
+                </ul>
 
-                    @foreach (var t in Model.TodoList.Where(t => !t.IsDone))
-                    {
-                        <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-3 border-bottom task-card">
-                            <div class="d-flex align-items-center flex-grow-1">
-                                <div class="me-3">
-                                    <form method="post" asp-page-handler="Done" style="margin:0;">
-                                        <input type="hidden" name="id" value="@t.Id">
-                                        <button type="submit" class="btn btn-link p-0 text-decoration-none" title="完了にする">
-                                            <i class="bi bi-circle text-muted fs-4"></i>
-                                        </button>
-                                    </form>
+                <div class="tab-content" id="viewTabContent">
+                    <!-- リスト表示ビュー -->
+                    <div class="tab-pane fade show active" id="list-view" role="tabpanel" aria-labelledby="list-tab">
+                        <h3 class="h6 mb-3 fw-bold text-secondary border-bottom pb-2">未完了のタスク</h3>
+                        <div class="list-group list-group-flush mb-4" style="max-height: 40vh; overflow-y: auto; overflow-x: hidden;">
+                            @if (!Model.TodoList.Any(t => !t.IsDone))
+                            {
+                                <div class="text-center py-4 bg-light rounded">
+                                    <i class="bi bi-emoji-sunglasses text-muted" style="font-size: 2.5rem;"></i>
+                                    <p class="mt-2 text-muted mb-0">未完了のタスクはありません！</p>
                                 </div>
-                                <div class="flex-grow-1">
-                                    <div class="d-flex align-items-center gap-2 mb-1">
-                                        <span class="badge @GetPriorityBadgeClass(t.Priority)">
-                                            @GetPriorityLabel(t.Priority)
-                                        </span>
-                                        @if (t.DueDate.HasValue)
-                                        {
-                                            <span class="badge bg-light text-dark border @(t.DueDate.Value < DateTime.Now.Date ? "border-danger text-danger" : "")">
-                                                <i class="bi bi-calendar-event me-1"></i>
-                                                @t.DueDate.Value.ToString("yyyy/MM/dd")
-                                                @(t.DueDate.Value < DateTime.Now.Date ? " (期限切れ)" : "")
-                                            </span>
-                                        }
+                            }
+
+                            @foreach (var t in Model.TodoList.Where(t => !t.IsDone))
+                            {
+                                <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-3 border-bottom task-card">
+                                    <div class="d-flex align-items-center flex-grow-1">
+                                        <div class="me-3">
+                                            <form method="post" asp-page-handler="Done" style="margin:0;">
+                                                <input type="hidden" name="id" value="@t.Id">
+                                                <button type="submit" class="btn btn-link p-0 text-decoration-none" title="完了にする">
+                                                    <i class="bi bi-circle text-muted fs-4"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex align-items-center gap-2 mb-1">
+                                                <span class="badge @GetPriorityBadgeClass(t.Priority)">
+                                                    @GetPriorityLabel(t.Priority)
+                                                </span>
+                                                @if (t.DueDate.HasValue)
+                                                {
+                                                    <span class="badge bg-light text-dark border @(t.DueDate.Value < DateTime.Now.Date ? "border-danger text-danger" : "")">
+                                                        <i class="bi bi-calendar-event me-1"></i>
+                                                        @t.DueDate.Value.ToString("yyyy/MM/dd")
+                                                        @(t.DueDate.Value < DateTime.Now.Date ? " (期限切れ)" : "")
+                                                    </span>
+                                                }
+                                            </div>
+                                            <div class="fw-bold">@t.Name</div>
+                                        </div>
                                     </div>
-                                    <div class="fw-bold">@t.Name</div>
-                                </div>
-                            </div>
 
-                            <div class="ms-3 pe-2">
-                                <form method="post" asp-page-handler="Delete" style="margin:0;">
-                                    <input type="hidden" name="id" value="@t.Id">
-                                    <button type="submit" class="btn btn-sm btn-light text-danger border-0" title="削除">
-                                        <i class="bi bi-trash3"></i>
-                                    </button>
-                                </form>
-                            </div>
+                                    <div class="ms-3 pe-2">
+                                        <form method="post" asp-page-handler="Delete" style="margin:0;">
+                                            <input type="hidden" name="id" value="@t.Id">
+                                            <button type="submit" class="btn btn-sm btn-light text-danger border-0" title="削除">
+                                                <i class="bi bi-trash3"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            }
                         </div>
-                    }
+                    </div>
+                    
+                    <!-- カレンダー表示ビュー -->
+                    <div class="tab-pane fade" id="calendar-view" role="tabpanel" aria-labelledby="calendar-tab">
+                        <div id="calendar" class="mb-4 bg-white p-3 rounded border"></div>
+                    </div>
                 </div>
 
                 <!-- 完了済みタスクリスト (折りたたみ) -->
@@ -215,6 +238,60 @@
 
     <!-- Bootstrap JS の読み込み -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- FullCalendar の読み込み -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'ja',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,listWeek'
+                },
+                buttonText: {
+                    today: '今日',
+                    month: '月',
+                    list: 'リスト'
+                },
+                height: 'auto',
+                // C#のモデルデータをJSON形式にしてFullCalendarに渡す
+                events: [
+                    @foreach (var t in Model.TodoList.Where(t => t.DueDate.HasValue && !t.IsDone))
+                    {
+                        var color = t.Priority switch {
+                            1 => "#dc3545", // danger
+                            2 => "#ffc107", // warning
+                            3 => "#0dcaf0", // info
+                            _ => "#6c757d"  // secondary
+                        };
+                        var textColor = t.Priority == 2 ? "#000" : "#fff";
+
+                        <text>
+                        {
+                            id: '@t.Id',
+                            title: '@Html.Raw(t.Name.Replace("'", "\\'"))',
+                            start: '@t.DueDate.Value.ToString("yyyy-MM-dd")',
+                            backgroundColor: '@color',
+                            borderColor: '@color',
+                            textColor: '@textColor',
+                            allDay: true
+                        },
+                        </text>
+                    }
+                ]
+            });
+
+            // タブが切り替わった時にカレンダーを再描画する（サイズ崩れ防止）
+            var calendarTab = document.getElementById('calendar-tab');
+            calendarTab.addEventListener('shown.bs.tab', function (event) {
+                calendar.render();
+            });
+        });
+    </script>
 </body>
 
 </html>
