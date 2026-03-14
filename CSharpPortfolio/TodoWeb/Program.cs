@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using TodoWeb.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Razor Pages を使うためのサービスを追加
@@ -9,14 +11,8 @@ builder.Services.AddDbContext<MyDbContext>(options => options.UseSqlite("Data So
 
 var app = builder.Build();
 
-// 2. Razor Pages への道（ルーティング）を有効にする
+// Razor Pages へのルーティングを有効にする
 app.MapRazorPages();
 
-
-
-
-
-
-// 一時的に古いリクエスト（/add など）を残しても良いですが、
-// Razor Pagesへ移行するので一旦スッキリさせます。
 app.Run();
+
