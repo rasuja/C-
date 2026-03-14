@@ -40,7 +40,8 @@ public class IndexModel : PageModel
     /// </summary>
     /// <param name="taskname">タスク名</param>
     /// <param name="priority">優先度 (1=高, 2=中, 3=低)</param>
-    public async Task<IActionResult> OnPostAddAsync(string taskname, int priority)
+    /// <param name="dueDate">期限（日付）</param>
+    public async Task<IActionResult> OnPostAddAsync(string taskname, int priority, DateTime? dueDate)
     {
         if (!string.IsNullOrEmpty(taskname))
         {
@@ -48,7 +49,8 @@ public class IndexModel : PageModel
             { 
                 Name = taskname, 
                 IsDone = false,
-                Priority = priority
+                Priority = priority,
+                DueDate = dueDate
             });
             await _context.SaveChangesAsync();
         }

@@ -24,4 +24,9 @@ public class ToDoItem
     /// 優先度 (1=高, 2=中, 3=低)
     /// </summary>
     public int Priority { get; set; } = 2;
+
+    /// <summary>
+    /// 期限（日付）
+    /// </summary>
+    public DateTime? DueDate { get; set; }
 }
