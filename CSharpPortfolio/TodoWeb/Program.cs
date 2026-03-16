@@ -3,7 +3,7 @@ using TodoWeb.Services;
 // コンテナ環境（またはローカル）で設定されるクレデンシャルパスを読み込み
 // （ローカル開発では絶対パス、コンテナ環境では相対パス等になることを考慮）
 var credentialPath = Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS") 
-    ?? @"C:\Users\S077\Desktop\ポートフォリオ\CSharpPortfolio\TodoWeb\portfolio-todo-app-700b4-firebase-adminsdk-fbsvc-9ee19d2e80.json";
+    ?? @"C:\Users\S077\Desktop\ポートフォリオ\CSharpPortfolio\TodoWeb\portfolio-todo-app-700b4-firebase-adminsdk-fbsvc-484a03b376.json";
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credentialPath);
 
 var builder = WebApplication.CreateBuilder(args);
