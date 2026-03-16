@@ -1,0 +1,17 @@
+# Firebase Service Account Keys
+*.json
+!appsettings.json
+!appsettings.Development.json
+!project.assets.json
+!project.razor.json
+!staticwebassets.build.json
+
+# Visual Studio / .NET
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.db
+*.sqlite
+todo.db
