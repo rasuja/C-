@@ -1,0 +1,50 @@
+@page
+@model SignupModel
+@{
+    ViewData["Title"] = "新規ユーザー登録";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow">
+                <div class="card-body p-4">
+                    <h3 class="text-center mb-4">アカウント作成</h3>
+                    
+                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                    {
+                        <div class="alert alert-danger">@Model.ErrorMessage</div>
+                    }
+
+                    <form method="post">
+                        <div class="mb-3">
+                            <label class="form-label">ユーザーID（半角英数字）</label>
+                            <input type="text" name="Username" class="form-control" required placeholder="例: sato_pm">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">表示名（氏名など）</label>
+                            <input type="text" name="DisplayName" class="form-control" required placeholder="例: 佐藤 太郎">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">役割 (Role)</label>
+                            <select name="Role" class="form-select" required>
+                                <option value="メンバー">メンバー (一般)</option>
+                                <option value="リーダー">リーダー (技術確認)</option>
+                                <option value="PM">PM (進行管理)</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">パスワード</label>
+                            <input type="password" name="Password" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2">登録して始める</button>
+                    </form>
+                    
+                    <div class="text-center mt-3">
+                        <p>既にアカウントをお持ちですか？ <a asp-page="/Login">ログイン画面へ</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

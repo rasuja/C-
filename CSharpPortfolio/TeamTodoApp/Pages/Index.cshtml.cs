@@ -21,25 +21,24 @@ public class IndexModel : PageModel
         Tasks = await _firestoreService.GetTodoItemsAsync();
     }
 
-    public async Task<IActionResult> OnPostAddAsync(string title, string assigneeAndRole, DateTime dueDate)
+    public async Task<IActionResult> OnPostAddAsync(string title, DateTime dueDate)
     {
-        if (string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(assigneeAndRole))
+        if (string.IsNullOrWhiteSpace(title))
         {
             return RedirectToPage();
         }
 
-        // "佐藤（PM）" のような文字列から、名前と役割を分離する処理
-        var parts = assigneeAndRole.Split(new[] { '（', '）', '(', ')' }, StringSplitOptions.RemoveEmptyEntries);
-        var name = parts.Length > 0 ? parts[0] : "不明";
-        var role = parts.Length > 1 ? parts[1] : "不明";
+        var loggedInUserName = HttpContext.User.Identity?.Name ?? "不明";
+        var loggedInUserRole = HttpContext.User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value ?? "メンバー";
 
         var newItem = new ToDoItem
         {
             Title = title,
-            Assignee = name,
-            Role = role,
+            Assignee = loggedInUserName,
+            Role = loggedInUserRole,
             Status = "ToDo", // 初期ステータス
-            DueDate = dueDate
+            DueDate = dueDate,
+            Description = "" // 初期値
         };
 
         await _firestoreService.AddTodoItemAsync(newItem);

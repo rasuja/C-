@@ -22,5 +22,8 @@ namespace TeamTodoApp.Models
 
         [FirestoreProperty]
         public DateTime DueDate { get; set; }
+
+        [FirestoreProperty]
+        public string Description { get; set; } // タスクの詳細な説明文
     }
 }

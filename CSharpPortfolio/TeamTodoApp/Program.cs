@@ -10,8 +10,20 @@ var builder = WebApplication.CreateBuilder(args);
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
+// 認証基盤の追加（Cookieベース）
+builder.Services.AddAuthentication("Cookies").AddCookie("Cookies", options =>
+{
+    options.LoginPath = "/Login"; // 未ログイン時の転送先
+    options.AccessDeniedPath = "/AccessDenied";
+});
+
 // Add services to the container.
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions.AuthorizeFolder("/"); // 全ページを原則ログイン必須に
+    options.Conventions.AllowAnonymousToPage("/Login");
+    options.Conventions.AllowAnonymousToPage("/Signup");
+});
 builder.Services.AddSingleton<FirestoreService>(new FirestoreService("portfolio-todo-app-700b4"));
 
 var app = builder.Build();
@@ -20,13 +32,15 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseAuthentication(); // ルーティングの後に配置
 app.UseAuthorization();
+
 app.MapStaticAssets();
 app.MapRazorPages();
 app.Run();

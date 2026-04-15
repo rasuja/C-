@@ -47,5 +47,30 @@ namespace TeamTodoApp.Services
             var docRef = _db.Collection("team_tasks").Document(id);
             await docRef.DeleteAsync();
         }
+
+        public async Task UpdateTodoItemDescriptionAsync(string id, string description)
+        {
+            var docRef = _db.Collection("team_tasks").Document(id);
+            await docRef.UpdateAsync("Description", description ?? "");
+        }
+
+        // --- User 管理用のメソッド ---
+
+        public async Task<AppUser?> GetUserByIdAsync(string id)
+        {
+            var docRef = _db.Collection("users").Document(id);
+            var snapshot = await docRef.GetSnapshotAsync();
+            if (snapshot.Exists)
+            {
+                return snapshot.ConvertTo<AppUser>();
+            }
+            return null;
+        }
+
+        public async Task CreateUserAsync(AppUser user)
+        {
+            var docRef = _db.Collection("users").Document(user.Id); // ID（Username）をドキュメントIDとする
+            await docRef.SetAsync(user);
+        }
     }
 }

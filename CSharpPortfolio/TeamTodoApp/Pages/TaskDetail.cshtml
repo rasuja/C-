@@ -1,0 +1,66 @@
+@page "{id}"
+@model TaskDetailModel
+@{
+    ViewData["Title"] = "タスク詳細";
+    
+    string GetRoleBadgeColor(string role)
+    {
+        return role switch {
+            "PM" => "bg-danger",
+            "リーダー" => "bg-warning text-dark",
+            "メンバー" => "bg-info text-dark",
+            _ => "bg-secondary"
+        };
+    }
+}
+
+<div class="container mt-4">
+    <div class="mb-3">
+        <a asp-page="/Index" class="text-decoration-none">← カンバンボードへ戻る</a>
+    </div>
+
+    @if (Model.TaskItem == null)
+    {
+        <div class="alert alert-danger">タスクが見つかりませんでした。</div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">@Model.TaskItem.Title</h4>
+                <span class="badge bg-light text-dark fs-6">Status: @Model.TaskItem.Status</span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <p class="text-muted mb-1 small">担当者</p>
+                        <p class="fs-5 mb-0">
+                            @Model.TaskItem.Assignee 
+                            <span class="badge @GetRoleBadgeColor(Model.TaskItem.Role)">@Model.TaskItem.Role</span>
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="text-muted mb-1 small">期限</p>
+                        <p class="fs-5 mb-0">@Model.TaskItem.DueDate.ToString("yyyy/MM/dd")</p>
+                    </div>
+                </div>
+
+                <form method="post">
+                    <input type="hidden" name="Id" value="@Model.TaskItem.Id" />
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">詳細な説明・メモ (Description)</label>
+                        <textarea name="Description" class="form-control" rows="8" placeholder="タスクの要件や実装メモをここに書き込めます...">@Model.TaskItem.Description</textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">説明を保存する</button>
+                    
+                    @if (TempData["Message"] != null)
+                    {
+                        <span class="text-success ms-3 fw-bold">@TempData["Message"]</span>
+                    }
+                </form>
+            </div>
+        </div>
+    }
+</div>
