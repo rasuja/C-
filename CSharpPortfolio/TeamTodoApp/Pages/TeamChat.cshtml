@@ -1,0 +1,82 @@
+@page
+@model TeamTodoApp.Pages.TeamChatModel
+@{
+    ViewData["Title"] = "チーム全体のチャット";
+    var currentUser = User.Identity?.Name ?? "";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="fw-bold">
+            <i class="bi bi-chat-square-dots-fill text-primary me-2"></i>チーム全体チャット
+        </h2>
+        <p class="text-muted">チームメンバー全員が見ることができる共有のチャットルームです。「<code>@@ユーザーID</code>」と入れてメッセージを送ると、相手宛ての**メンション**として強調表示されます。</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-10 mx-auto">
+        <!-- メッセージ表示エリア -->
+        <div class="card shadow mb-4 border-0">
+            <!-- 高さを固定してスクロールさせる -->
+            <div class="card-body p-4" style="height: 60vh; overflow-y: auto; background-color: #f1f5f9;">
+                <div class="d-flex flex-column">
+                    @if (!Model.Messages.Any())
+                    {
+                        <div class="text-center text-muted my-auto">
+                            まだメッセージはありません。<br>プロジェクトについて最初のあいさつを投稿してみましょう！
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var msg in Model.Messages)
+                        {
+                            var isMe = msg.SenderId == currentUser;
+                            <div class="d-flex flex-column mb-3 @(isMe ? "align-items-end" : "align-items-start")">
+                                <span class="text-muted small mb-1 px-1">
+                                    <i class="bi bi-person-fill"></i> <strong>@msg.SenderName</strong> <span class="ms-1 opacity-75" style="font-size:0.8rem;">@msg.CreatedAt.ToLocalTime().ToString("MM/dd HH:mm")</span>
+                                </span>
+                                <!-- 送信者が自分なら青系、他なら白系の吹き出し -->
+                                <div class="p-3 rounded-4 shadow-sm @(isMe ? "bg-primary text-white" : "bg-white text-dark")" style="max-width: 80%; border-bottom-right-radius: @(isMe ? "0" : "1rem") !important; border-bottom-left-radius: @(isMe ? "1rem" : "0") !important;">
+                                    @Html.Raw(Model.RenderMessage(msg.MessageText))
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+            
+            <!-- 投稿フォーム -->
+            <div class="card-footer bg-white border-0 p-3 pt-4">
+                <form method="post" class="d-flex align-items-end gap-2">
+                    <div class="flex-grow-1">
+                        <textarea name="messageText" class="form-control" rows="2" placeholder="メッセージを入力（Shift+Enterで改行 / 例: @@testuser 明日のMTGの件ですが...）" required style="resize: none;"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary px-4 py-2 fw-bold" style="height: 54px;">
+                        送信 <i class="bi bi-send-fill ms-1"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // チャット画面を開いた瞬間に一番下（最新メッセージ）までスクロールさせる
+        document.addEventListener("DOMContentLoaded", function () {
+            var chatBody = document.querySelector('.card-body');
+            if (chatBody) {
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+        });
+
+        // フォームでEnterを押すとそのまま送信する（Shift+Enterで改行）
+        document.querySelector('textarea[name="messageText"]').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                this.form.submit();
+            }
+        });
+    </script>
+}

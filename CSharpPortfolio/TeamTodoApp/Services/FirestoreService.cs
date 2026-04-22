@@ -54,7 +54,45 @@ namespace TeamTodoApp.Services
             await docRef.UpdateAsync("Description", description ?? "");
         }
 
+        // --- Chat 管理用のメソッド ---
+        public async Task<List<ChatMessage>> GetChatMessagesAsync()
+        {
+            var collection = _db.Collection("team_messages");
+            var snapshot = await collection.OrderByDescending("CreatedAt").Limit(50).GetSnapshotAsync();
+            var messages = new List<ChatMessage>();
+            foreach (var doc in snapshot.Documents)
+            {
+                if (doc.Exists)
+                {
+                    messages.Add(doc.ConvertTo<ChatMessage>());
+                }
+            }
+            return messages.OrderBy(m => m.CreatedAt).ToList();
+        }
+
+        public async Task AddChatMessageAsync(ChatMessage message)
+        {
+            var collection = _db.Collection("team_messages");
+            message.CreatedAt = message.CreatedAt.ToUniversalTime();
+            await collection.AddAsync(message);
+        }
+
         // --- User 管理用のメソッド ---
+
+        public async Task<List<AppUser>> GetAllUsersAsync()
+        {
+            var collection = _db.Collection("users");
+            var snapshot = await collection.GetSnapshotAsync();
+            var users = new List<AppUser>();
+            foreach (var doc in snapshot.Documents)
+            {
+                if (doc.Exists)
+                {
+                    users.Add(doc.ConvertTo<AppUser>());
+                }
+            }
+            return users;
+        }
 
         public async Task<AppUser?> GetUserByIdAsync(string id)
         {

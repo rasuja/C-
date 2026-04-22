@@ -16,12 +16,24 @@ public class SignupModel : PageModel
         _firestoreService = firestoreService;
     }
 
-    public void OnGet()
+    public IActionResult OnGet()
     {
+        var role = HttpContext.User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value;
+        if (role != "PM")
+        {
+            return RedirectToPage("/Index");
+        }
+        return Page();
     }
 
     public async Task<IActionResult> OnPostAsync(string username, string displayName, string role, string password)
     {
+        var currentRole = HttpContext.User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value;
+        if (currentRole != "PM")
+        {
+            return RedirectToPage("/Index");
+        }
+
         if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(displayName))
         {
             ErrorMessage = "すべての項目を入力してください。";

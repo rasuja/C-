@@ -22,7 +22,6 @@ builder.Services.AddRazorPages(options =>
 {
     options.Conventions.AuthorizeFolder("/"); // 全ページを原則ログイン必須に
     options.Conventions.AllowAnonymousToPage("/Login");
-    options.Conventions.AllowAnonymousToPage("/Signup");
 });
 builder.Services.AddSingleton<FirestoreService>(new FirestoreService("portfolio-todo-app-700b4"));
 

@@ -15,13 +15,15 @@ public class IndexModel : PageModel
     }
 
     public List<ToDoItem> Tasks { get; set; } = new();
+    public List<AppUser> AllUsers { get; set; } = new();
 
     public async Task OnGetAsync()
     {
         Tasks = await _firestoreService.GetTodoItemsAsync();
+        AllUsers = await _firestoreService.GetAllUsersAsync();
     }
 
-    public async Task<IActionResult> OnPostAddAsync(string title, DateTime dueDate)
+    public async Task<IActionResult> OnPostAddAsync(string title, DateTime dueDate, string assigneeId)
     {
         if (string.IsNullOrWhiteSpace(title))
         {
@@ -31,11 +33,25 @@ public class IndexModel : PageModel
         var loggedInUserName = HttpContext.User.Identity?.Name ?? "不明";
         var loggedInUserRole = HttpContext.User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value ?? "メンバー";
 
+        string targetAssigneeName = loggedInUserName;
+        string targetAssigneeRole = loggedInUserRole;
+
+        // PMかリーダーで、かつassigneeIdが送信されている場合は対象ユーザーを割り当てる
+        if ((loggedInUserRole == "PM" || loggedInUserRole == "リーダー") && !string.IsNullOrWhiteSpace(assigneeId))
+        {
+            var assignedUser = await _firestoreService.GetUserByIdAsync(assigneeId);
+            if (assignedUser != null)
+            {
+                targetAssigneeName = assignedUser.DisplayName ?? assignedUser.Id;
+                targetAssigneeRole = assignedUser.Role;
+            }
+        }
+
         var newItem = new ToDoItem
         {
             Title = title,
-            Assignee = loggedInUserName,
-            Role = loggedInUserRole,
+            Assignee = targetAssigneeName,
+            Role = targetAssigneeRole,
             Status = "ToDo", // 初期ステータス
             DueDate = dueDate,
             Description = "" // 初期値

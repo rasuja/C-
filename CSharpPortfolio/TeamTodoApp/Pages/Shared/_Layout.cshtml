@@ -23,7 +23,14 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-page="/Index">カンバンボード</a>
+                            <a class="nav-link text-light fw-bold" asp-area="" asp-page="/Index">
+                                <i class="bi bi-kanban"></i> カンバンボード
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light fw-bold" asp-area="" asp-page="/TeamChat">
+                                <i class="bi bi-chat-dots"></i> チームチャット
+                            </a>
                         </li>
                     </ul>
                     <ul class="navbar-nav">
@@ -33,6 +40,12 @@
                             <li class="nav-item d-flex align-items-center me-3 text-light">
                                 <span>こんにちは、@User.Identity.Name さん [@role]</span>
                             </li>
+                            @if (role == "PM")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-info fw-bold" asp-page="/Signup">新規アカウント登録</a>
+                                </li>
+                            }
                             <li class="nav-item">
                                 <form class="form-inline" asp-page="/Logout" method="post">
                                     <button type="submit" class="nav-link btn btn-link text-light">ログアウト</button>
@@ -43,9 +56,6 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-light" asp-page="/Login">ログイン</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-info" asp-page="/Signup">新規登録</a>
                             </li>
                         }
                     </ul>

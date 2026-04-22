@@ -31,17 +31,37 @@
         <div class="card-body">
             <h5 class="card-title">新規タスク作成</h5>
             <form method="post" asp-page-handler="Add" class="row g-3 align-items-end">
-                <div class="col-md-6">
-                    <label class="form-label">タスク名</label>
-                    <input type="text" name="Title" class="form-control" required placeholder="実装するタスクを入力...">
-                </div>
+                @{
+                    var currentRole = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Role)?.Value;
+                    bool canAssign = currentRole == "PM" || currentRole == "リーダー";
+                }
                 <div class="col-md-4">
-                    <label class="form-label">期限 (DueDate)</label>
+                    <label class="form-label text-truncate">タスク名</label>
+                    <input type="text" name="Title" class="form-control" required placeholder="タスクを入力...">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-truncate">期限 (DueDate)</label>
                     <input type="date" name="DueDate" class="form-control" required value="@DateTime.Now.ToString("yyyy-MM-dd")">
                 </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">追加</button>
-                    <small class="text-muted d-block text-center mt-1">※自分担当として追加されます</small>
+                @if (canAssign)
+                {
+                    <div class="col-md-3">
+                        <label class="form-label text-truncate">担当者</label>
+                        <select name="assigneeId" class="form-select">
+                            <option value="">(自分自身)</option>
+                            @foreach(var u in Model.AllUsers)
+                            {
+                                <option value="@u.Id">@u.DisplayName [@u.Role]</option>
+                            }
+                        </select>
+                    </div>
+                }
+                <div class="@(canAssign ? "col-md-2" : "col-md-5")">
+                    <button type="submit" class="btn btn-primary w-100 text-truncate">追加</button>
+                    @if (!canAssign)
+                    {
+                        <small class="text-muted d-block text-center mt-1 text-truncate">※自分担当で追加</small>
+                    }
                 </div>
             </form>
         </div>
